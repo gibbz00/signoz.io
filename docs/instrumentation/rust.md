@@ -15,34 +15,29 @@ import InstrumentationFAQ from '../shared/instrumentation-faq.md'
 To configure your application to send data we will need a function to initialize OpenTelemetry. Add the following snippet of code in your `main.rs` file.
 
 ```rust
-use opentelemetry::sdk::Resource;
 use opentelemetry::trace::TraceError;
-use opentelemetry::{global, sdk::trace as sdktrace};
-use opentelemetry::{trace::Tracer};
-use opentelemetry_otlp::WithExportConfig;
+use opentelemetry_sdk::trace::Tracer;
 
-
-fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
+fn init_tracer() -> Result<Tracer, TraceError> {
     opentelemetry_otlp::new_pipeline()
         .tracing()
-        .with_exporter(opentelemetry_otlp::new_exporter().tonic().with_env())
-        .with_trace_config(
-            sdktrace::config().with_resource(Resource::default()),
-        )
-        .install_batch(opentelemetry::runtime::Tokio)
+        .with_exporter(opentelemetry_otlp::new_exporter().tonic())
+        .install_batch(opentelemetry_sdk::runtime::Tokio)
 }
 ```
 
 ### **Step 2:  Initialize the tracer in main.rs**<br></br>
 
-Modify the main function to initialise the tracer  in `main.rs`
+Modify the main function to initialize the tracer  in `main.rs`
 
 ```rust
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
-    let _ = init_tracer()?;
+    let tracer = init_tracer()?;
 
-    ...
+    // ...
+
+    opentelemetry::global::shutdown_tracer_provider();
 }
 ```
 
@@ -74,6 +69,6 @@ OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 OTEL_RESOURCE_ATTRIBUTES=servi
 
 ## Tutorial 
 
-Here's a [tutorial](https://signoz.io/blog/opentelemetry-rust/) with step by step guide on how to install SigNoz and start monitoring a sample Rust app. 
+Here's a [tutorial](https://signoz.io/blog/opentelemetry-rust/) with step-by-step guide on how to install SigNoz and start monitoring a sample Rust app.
 
 <InstrumentationFAQ />
