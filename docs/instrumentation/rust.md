@@ -14,7 +14,7 @@ import InstrumentationFAQ from '../shared/instrumentation-faq.md'
 
 To configure your application to send data we will need a function to initialize OpenTelemetry. Add the following snippet of code in your `main.rs` file.
 
-```jsx
+```rust
 use opentelemetry::sdk::Resource;
 use opentelemetry::trace::TraceError;
 use opentelemetry::{global, sdk::trace as sdktrace};
@@ -37,7 +37,7 @@ fn init_tracer() -> Result<sdktrace::Tracer, TraceError> {
 
 Modify the main function to initialise the tracer  in `main.rs`
 
-```jsx
+```rust
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
     let _ = init_tracer()?;
@@ -48,7 +48,7 @@ async fn main() -> Result<(), Box<dyn Error + Send + Sync + 'static>> {
 
 ### **Step 3:  Add the OpenTelemetry instrumentation for your sample Rust app**<br></br>
 
-```jsx
+```rust
     let parent_cx = global::get_text_map_propagator(|propagator| {
         propagator.extract(&HeaderExtractor(req.headers()))
     });
@@ -67,7 +67,7 @@ Since, we have installed SigNoz on our local machine, we use the above IP. If yo
 
 Hence, the final run command looks like this:
 
-```jsx
+```rust
 OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4317 OTEL_RESOURCE_ATTRIBUTES=service.name=rust-app cargo run
 ```
 
